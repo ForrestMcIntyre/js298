@@ -1,0 +1,21 @@
+{{#movie}}
+
+  <h2>{{title}}</h2>
+
+  <p>Showtimes:
+    <ul>
+      {{#times}}
+       <li>
+         <a href="#">{{.}}</a>
+       </li>
+      {{/times}}
+    </ul>
+  </p>
+
+  <img src="{{poster}}">
+
+  <p>starring: {{#starring}} {{.}}, {{/starring}} </p>
+
+  <p>length: {{length}} minutes </p>
+
+{{/movie}}

@@ -1,0 +1,13 @@
+body{
+  line-height:1.7em;
+}
+ul{
+  list-display:none;
+}
+li{
+  display:inline-block;
+}
+h1 a{
+  text-decoration:none;
+  color:black;
+}
