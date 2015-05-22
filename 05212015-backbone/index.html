@@ -1,0 +1,107 @@
+<!doctype html>
+<html>
+<body>
+  <div class="elevator"></div>
+  <script id="elevator-template" type="text/html">
+<pre>                 FLOOR: <%= floor %>  DESTINATION: <%= dest %>                 </pre>
+<pre>___________________________________________
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+|                    |                    |
+-------------------------------------------</pre>
+<% for (var i = 1; i <= 12; i++) { %>
+  <button data-floor=<%= i %> class="floor <%= floorQueue[i] ? "active" : "" %>">
+    <%= i %>
+  </button>
+<% } %>
+<p>What floor would you like to go to?</p>
+<input class="input"><button class="move">GO</button>
+
+  </script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+  <script>
+var Elevator = Backbone.Model.extend({
+  defaults: {
+    floor: 0,
+    dest: 1,
+    floorQueue: {
+      1: true,
+      2: false,
+      3: true,
+      4: false,
+      5: false,
+      6: true,
+      7: false,
+      8: true,
+      9: false,
+      10: false,
+      11: false,
+      12: true
+    }
+  },
+  move: function(){
+    console.log(this.get("floorQueue"));
+    console.log(this.get("floor"));
+    var floor = this.get("floor");
+    var dest = this.get("dest");
+    var floorQueue = this.get("floorQueue");
+    if (floor < dest){
+      floor++;
+    } else if (floor > dest){
+      floor--;
+    }
+    floorQueue[floor] = false;
+    this.set("floorQueue", floorQueue);
+    this.set("floor", floor);
+  }
+});
+
+var ElevatorView = Backbone.View.extend({
+  el: ".elevator",
+  template: _.template($("#elevator-template").html()),
+  initialize: function(){
+    this.listenTo(this.model, "change", this.render);
+  },
+  events: {
+    //"keyup .input": "updateDest",
+    "click .floor": "updateDest"
+  },
+  updateDest: function(e){
+    var floor = $(e.target).attr("data-floor");
+    var floorQueue = this.model.get("floorQueue");
+    floorQueue[floor] = true;
+    this.model.set("floorQueue", floorQueue);
+    this.model.set("dest", floor);
+  },
+  move: function(){
+    this.model.move();
+  },
+  render: function() {
+    var data = this.model.toJSON();
+    this.$el.html(this.template(data));
+  }
+});
+
+var elev = new Elevator();
+var checkElevator = function(){
+  elev.move();
+  setTimeout(checkElevator, 1000);
+}
+checkElevator();
+var view = new ElevatorView({model: elev});
+view.render();
+  </script>
+</body>
+</html>
